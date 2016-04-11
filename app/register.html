@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html ng-app="rootApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./static/css/base.css">
+    <script src="./static/js/angular.min.js"></script>
+    <script src="http://cdn.bootcss.com/angular-ui-bootstrap/0.11.2/ui-bootstrap-tpls.js"></script>
+    <title>主页</title>
+</head>
+<body>
+<header class="navbar navbar-static-top bs-docs-nav" id="top">
+    <div class="nav-inline">
+        <div class="logo">
+            <a href="/">
+                <img src="./static/images/log.png">
+            </a>
+        </div>
+
+        <ul class="nav-title">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="acoount.html">个人中心</a></li>
+            <li><a href="collect.html">收藏夹</a></li>
+            <li><a href="about.html">关于我们</a></li>
+        </ul>
+    </div>
+</header>
+<div class="wap">
+    <div class="container">
+        <div class="form-panel round">
+            <div class="base-panel">
+                <div class="form-head">
+                    <h2>
+                        注册
+
+                    </h2>
+                    <span class="triangle"></span>
+                </div>
+                <form class="form-horizontal" name="registerForm" ng-controller="registerFormCtrl" novalidate>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">类&#12288;&#12288;型</label>
+
+                        <div class="col-xs-9 radio">
+                            <label>
+                                <input type="radio" name="type" value="personal" checked>求职者
+                            </label>
+                            &#12288;
+                            <label>
+                                <input type="radio" name="type" value="company">企业
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">邮&#12288;&#12288;箱</label>
+
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" name="email" ng-model="email" required>
+                            <span style="color:red" ng-show="registerForm.email.$dirty && registerForm.email.$invalid">
+                                sds
+                                <span ng-show="registerForm.email.$error.required">邮箱是必须的。</span>
+                                <span ng-show="registerForm.email.$error.email">非法的邮箱地址。</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">性&#12288;&#12288;别</label>
+
+                        <div class="col-xs-9 radio">
+                            <label>
+                                <input type="radio" name="gender" value="M" checked>男
+                            </label>
+                            &#12288;&#12288;&#12288;
+                            <label>
+                                <input type="radio" name="gender" value="F">女
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-controller="datetime">
+                        <label class="col-xs-3 control-label">出生日期</label>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" name="birthday" ng-model="birthday" datepicker-popup  ng-model="dt" is-open="opened"  max-date="'2999-12-30'"
+                                   datepicker-options="dateOptions"  ng-required="true" close-text="Close" style="width: 85%;float: left">
+                              <span class="input-group-btn"  style="width: 20%">
+                                  <button type="button" class="btn btn-default" ng-click="open($event)">
+                                      <i class="glyphicon glyphicon-calendar"></i>
+                                   </button>
+                              </span>
+                            <span class="error-tip" ng-show="registerForm.birthday.error" ng-model="registerForm.birthday.message"></span>
+                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">密&#12288;&#12288;码</label>
+
+                        <div class="col-xs-6">
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">确认密码</label>
+
+                        <div class="col-xs-6">
+                            <input type="password" class="form-control" name="password1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-4"></div>
+                        <div class="col-xs-4">
+                            <button class="btn btn-danger submit">提交</button>
+                        </div>
+                        <div class="col-xs-4"></div>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div ng-include="'footer.html'"></div>
+<script src="./static/js/base.js"></script>
+<script>
+    rootApp.controller('datetime',function($scope){
+        $scope.today = function(){ // 创建一个方法，
+            var date = new Date(); // 定义一个属性来接收当天日期
+            $scope.dt =date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+        };
+        $scope.today(); // 运行today方法
+        $scope.clear = function(){  //当运行clear的时候将dt置为空
+            $scope.dt = null;
+        }
+        $scope.open = function($event){  // 创建open方法 。 下面默认行为并将opened 设为true
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.opened = true;
+        }
+        $scope.disabled = function(date , mode){
+            return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6))
+        }
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1
+        }
+    })
+
+    rootApp.controller('registerFormCtrl',function($scope){
+    })
+</script>
+</body>
+</html>
