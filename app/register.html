@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./static/css/base.css">
     <script src="./static/js/angular.min.js"></script>
     <script src="http://cdn.bootcss.com/angular-ui-bootstrap/0.11.2/ui-bootstrap-tpls.js"></script>
+    <script src="./static/js/md5.js"></script>
     <title>注册</title>
 </head>
 <body>
@@ -36,17 +37,17 @@
                     </h2>
                     <span class="triangle"></span>
                 </div>
-                <form class="form-horizontal" name="registerForm" ng-controller="registerFormCtrl" novalidate >
+                <form class="form-horizontal" name="registerForm" ng-controller="registerFormCtrl" novalidate ng-init="user.type=personal;user.gender=M">
                     <div class="form-group">
                         <label class="col-xs-3 control-label">类&#12288;&#12288;型</label>
 
                         <div class="col-xs-9 radio">
                             <label>
-                                <input type="radio" name="type" value="personal" checked>求职者
+                                <input type="radio" name="type" value="personal" ng-model="user.type" ng-checked="true" required>求职者
                             </label>
                             &#12288;
                             <label>
-                                <input type="radio" name="type" value="company">企业
+                                <input type="radio" name="type" value="company"  ng-model="user.type">企业
                             </label>
                         </div>
                     </div>
@@ -54,7 +55,7 @@
                         <label class="col-xs-3 control-label">邮&#12288;&#12288;箱</label>
 
                         <div class="col-xs-6">
-                            <input type="email" class="form-control" name="email" ng-model="email" required>
+                            <input type="email" class="form-control" name="email" ng-model="user.email" required>
                             <span style="color:red" ng-show="registerForm.email.$dirty && registerForm.email.$invalid">
                                 <span ng-show="registerForm.email.$error.required">邮箱是必须的。</span>
                                 <span ng-show="registerForm.email.$error.email">非法的邮箱地址。</span>
@@ -66,37 +67,38 @@
 
                         <div class="col-xs-9 radio">
                             <label>
-                                <input type="radio" name="gender" value="M" checked>男
+                                <input type="radio" name="gender" value="M" ng-model="user.gender" ng-checked="true" required>男
                             </label>
                             &#12288;&#12288;&#12288;
                             <label>
-                                <input type="radio" name="gender" value="F">女
+                                <input type="radio" name="gender" value="F" ng-model="user.gender">女
                             </label>
                         </div>
                     </div>
                     <div class="form-group" ng-controller="datetime">
                         <label class="col-xs-3 control-label">出生日期</label>
                         <div class="col-xs-6">
-                            <input type="text" class="form-control" name="birthday" ng-model="birthday" datepicker-popup  ng-model="dt" is-open="opened"  max-date="'2999-12-30'"
-                                   datepicker-options="dateOptions"  ng-required="true" close-text="Close" style="width: 85%;float: left" ng-pattern="birthdayRegex" required>
+                            <input type="text" class="form-control" name="birthday" ng-model="user.birthday" datepicker-popup is-open="opened"  max-date="'2999-12-30'"
+                                   datepicker-options="dateOptions"  ng-required="true" close-text="Close" style="width: 85%;float: left" ng-pattern="/^[0-3][0-9]{3}-[0-3][0-9]-[0-3][0-9]$/" required>
                               <span class="input-group-btn"  style="width: 20%">
                                   <button type="button" class="btn btn-default" ng-click="open($event)">
                                       <i class="glyphicon glyphicon-calendar"></i>
-                                   </button>
+                                  </button>
                               </span>
                              <span style="color:red" ng-show="registerForm.birthday.$dirty && registerForm.birthday.$invalid">
                                 <span ng-show="registerForm.birthday.$error.required">出生年月日是必须的。</span>
-                                <span ng-show="registerForm.birthday.$error.pattern">出生日期格式不对</span>
+                                <span ng-show="registerForm.birthday.$error.date">出生日期格式不对</span>
                             </span>
-                         </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-xs-3 control-label">密&#12288;&#12288;码</label>
 
                         <div class="col-xs-6">
-                            <input type="password" class="form-control" name="password" ng-model="password" required>
+                            <input type="password" class="form-control" name="password" ng-model="user.password" ng-pattern="/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,16}$/" required>
                             <span style="color:red" ng-show="registerForm.password.$dirty && registerForm.password.$invalid">
                                 <span ng-show="registerForm.password.$error.required">密码是必须的。</span>
+                                 <span ng-show="registerForm.password.$error.pattern">密码长度必须是6-16字符！</span>
                             </span>
                         </div>
                     </div>
@@ -104,9 +106,10 @@
                         <label class="col-xs-3 control-label">确认密码</label>
 
                         <div class="col-xs-6">
-                            <input type="password" class="form-control" name="password1" ng-model="password1" required ng-blur="passwordConfirm()">
+                            <input type="password" class="form-control" name="password1" ng-model="user.password1" ng-pattern="/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,16}$/" required ng-blur="passwordConfirm()">
                             <span style="color:red" ng-show="registerForm.password1.$dirty && registerForm.password1.$invalid">
                                 <span ng-show="registerForm.password1.$error.required">确认密码密码必须填！</span>
+                                 <span ng-show="registerForm.password1.$error.pattern">确认密码长度必须是6-16字符！</span>
                             </span>
                             <span style="color:red" ng-show="password1Confirm">与密码不一致！</span>
                         </div>
@@ -114,7 +117,7 @@
                     <div class="form-group">
                         <div class="col-xs-4"></div>
                         <div class="col-xs-4">
-                            <button class="btn btn-danger submit" ng-click="submit()" >提交</button>
+                            <button class="btn btn-danger submit" ng-click="submit()"  >提交</button>
                         </div>
                         <div class="col-xs-4"></div>
                     </div>
@@ -154,7 +157,7 @@
 
     rootApp.controller('registerFormCtrl',function($scope,$http){
         $scope.password1Confirm=false;
-        $scope.birthdayRegex = '^[0-1][0-9]{3}-[0-3][0-9]-[0-3][0-9]$';
+       // $scope.birthdayRegex = '\[0-9]';
         $scope.passwordConfirm = function(){
             if($scope.password1 != undefined && $scope.password != $scope.password1){
                 $scope.password1Confirm=true;
@@ -162,18 +165,13 @@
                 $scope.password1Confirm=false;
             }
         }
-       //提交表单
+        //提交表单
         formData.key="SendEmailVerifyCode";
-        var body={'email':'jin521436@163.com'};
-        formData.body=body
-        $http({
-            method: 'POST',
-            url: url,
-            params: formData
-        }).success(function(data,header,config,status){
-            alert(data);
-        });
-
+        var body=$scope.user;
+        formData.body=body;
+        $scope.submit=function(isValid){
+            alert($scope.user);
+        }
     })
 </script>
 </body>
